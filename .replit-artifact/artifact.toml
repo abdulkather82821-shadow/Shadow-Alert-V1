@@ -1,0 +1,24 @@
+kind = "mobile"
+previewPath = "/shadow-alert/"
+title = "Shadow Alert"
+description = "A personal screen-time coach that helps people set intentional app limits, understand daily habits, and take restorative breaks when limits are reached."
+version = "1.0.0"
+id = "artifacts/shadow-alert"
+router = "expo-domain"
+
+[[services]]
+name = "expo"
+ensurePreviewReachable = "/status"
+paths = [ "/shadow-alert/" ]
+localPort = 21533
+
+[services.development]
+run = "pnpm --filter @workspace/shadow-alert run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/shadow-alert", "run", "build" ]
+run = [ "pnpm", "--filter", "@workspace/shadow-alert", "run", "serve" ]
+
+[services.env]
+PORT = "21533"
+BASE_PATH = "/shadow-alert/"

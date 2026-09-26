@@ -1,0 +1,41 @@
+{
+  "expo": {
+    "name": "Shadow Alert",
+    "slug": "shadow-alert",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/shadow-alert-icon.png",
+    "scheme": "shadow-alert",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/images/shadow-alert-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FFFFFF"
+    },
+    "ios": {
+      "supportsTablet": false
+    },
+    "android": {
+      "package": "com.shadowalert.app",
+      "versionCode": 1
+    },
+    "web": {
+      "favicon": "./assets/images/shadow-alert-icon.png"
+    },
+    "plugins": [
+      [
+        "expo-router",
+        {
+          "origin": "https://replit.com/"
+        }
+      ],
+      "expo-font",
+      "expo-web-browser"
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    }
+  }
+}
