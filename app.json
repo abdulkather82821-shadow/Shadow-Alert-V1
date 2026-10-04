@@ -3,6 +3,7 @@
     "name": "Shadow Alert",
     "slug": "shadow-alert",
     "version": "1.0.0",
+    "description": "A gentle screen-time coach for intentional app limits and restorative pauses.",
     "orientation": "portrait",
     "icon": "./assets/images/shadow-alert-icon.png",
     "scheme": "shadow-alert",
@@ -11,7 +12,7 @@
     "splash": {
       "image": "./assets/images/shadow-alert-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#FFFFFF"
+      "backgroundColor": "#F7F6F2"
     },
     "ios": {
       "supportsTablet": false
@@ -21,15 +22,15 @@
       "versionCode": 1
     },
     "web": {
+      "bundler": "metro",
+      "name": "Shadow Alert",
+      "shortName": "Shadow Alert",
+      "themeColor": "#252D33",
+      "backgroundColor": "#F7F6F2",
       "favicon": "./assets/images/shadow-alert-icon.png"
     },
     "plugins": [
-      [
-        "expo-router",
-        {
-          "origin": "https://replit.com/"
-        }
-      ],
+      "expo-router",
       "expo-font",
       "expo-web-browser"
     ],

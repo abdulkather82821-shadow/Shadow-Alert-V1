@@ -4,24 +4,34 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
-import {
-  Inter_400Regular,
-  Inter_500Medium,
-  Inter_600SemiBold,
-  Inter_700Bold,
-  useFonts,
-} from '@expo-google-fonts/inter';
-import { Feather } from '@expo/vector-icons';
+import { EmptyState, LoadingState, PrimaryButton, Screen } from '@/components/ShadowUI';
+import { useShadowAlert } from '@/context/ShadowAlertContext';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { ShadowAlertProvider } from '@/context/ShadowAlertContext';
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+// Keep the splash visible until the navigation tree has mounted.
+SplashScreen.preventAutoHideAsync().catch(() => undefined);
 
 const queryClient = new QueryClient();
 
 function RootLayoutNav() {
+  const { isLoading, hasError, retry } = useShadowAlert();
+
+  if (isLoading) return <Screen><LoadingState /></Screen>;
+  if (hasError) {
+    return (
+      <Screen>
+        <EmptyState
+          icon="alert-circle"
+          title="Your space is resting"
+          body="We couldn't open your saved data. It stays on this device."
+          action={<PrimaryButton onPress={retry}>Try again</PrimaryButton>}
+        />
+      </Screen>
+    );
+  }
+
   return (
     <Stack screenOptions={{ headerBackTitle: 'Back', headerShown: false }}>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
@@ -33,35 +43,23 @@ function RootLayoutNav() {
 }
 
 export default function RootLayout() {
-  const [fontsLoaded, fontError] = useFonts({
-    Inter_400Regular,
-    Inter_500Medium,
-    Inter_600SemiBold,
-    Inter_700Bold,
-    ...Feather.font,
-  });
-
   useEffect(() => {
-    if (fontsLoaded || fontError) {
-      SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded, fontError]);
-
-  if (!fontsLoaded && !fontError) return null;
+    SplashScreen.hideAsync().catch(() => undefined);
+  }, []);
 
   return (
     <SafeAreaProvider>
-      <ErrorBoundary>
-        <QueryClientProvider client={queryClient}>
-          <ShadowAlertProvider>
-            <GestureHandlerRootView>
+      <QueryClientProvider client={queryClient}>
+        <ShadowAlertProvider>
+          <ErrorBoundary>
+            <GestureHandlerRootView style={{ flex: 1 }}>
               <KeyboardProvider>
                 <RootLayoutNav />
               </KeyboardProvider>
             </GestureHandlerRootView>
-          </ShadowAlertProvider>
-        </QueryClientProvider>
-      </ErrorBoundary>
+          </ErrorBoundary>
+        </ShadowAlertProvider>
+      </QueryClientProvider>
     </SafeAreaProvider>
   );
 }

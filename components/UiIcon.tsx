@@ -7,6 +7,7 @@ export type UiIconName =
   | 'arrow-left'
   | 'bar-chart-2'
   | 'bell'
+  | 'camera'
   | 'check'
   | 'check-circle'
   | 'chevron-down'
@@ -16,8 +17,10 @@ export type UiIconName =
   | 'feather'
   | 'info'
   | 'layers'
+  | 'message-circle'
   | 'moon'
   | 'pause'
+  | 'play'
   | 'plus'
   | 'refresh-cw'
   | 'rotate-ccw'
@@ -26,7 +29,20 @@ export type UiIconName =
   | 'shield'
   | 'sliders'
   | 'trash-2'
+  | 'tv'
   | 'x';
+
+const UI_ICON_NAMES = new Set<UiIconName>([
+  'alert-circle', 'arrow-left', 'bar-chart-2', 'bell', 'camera', 'check',
+  'check-circle', 'chevron-down', 'chevron-right', 'chevron-up', 'eye',
+  'feather', 'info', 'layers', 'message-circle', 'moon', 'pause', 'play',
+  'plus', 'refresh-cw', 'rotate-ccw', 'search', 'settings', 'shield',
+  'sliders', 'trash-2', 'tv', 'x',
+]);
+
+export function isUiIconName(name: string): name is UiIconName {
+  return UI_ICON_NAMES.has(name as UiIconName);
+}
 
 export function UiIcon({
   name,
@@ -77,6 +93,12 @@ export function UiIcon({
           <Path d="M10 21h4" {...line} />
         </>
       )}
+      {name === 'camera' && (
+        <>
+          <Path d="M4 8.5h3l1.5-2h7l1.5 2h3a1.5 1.5 0 0 1 1.5 1.5v8A1.5 1.5 0 0 1 20 19.5H4A1.5 1.5 0 0 1 2.5 18v-8A1.5 1.5 0 0 1 4 8.5Z" {...line} />
+          <Circle cx="12" cy="13.5" r="3.2" {...line} />
+        </>
+      )}
       {name === 'check' && <Polyline points="5,12.5 10,17.5 19,7" {...line} />}
       {name === 'check-circle' && (
         <>
@@ -113,6 +135,14 @@ export function UiIcon({
           <Path d="m4 16 8 4 8-4" {...line} />
         </>
       )}
+      {name === 'message-circle' && (
+        <>
+          <Path d="M20 11.4a7.9 7.9 0 0 1-8 7.7 8.8 8.8 0 0 1-3.5-.7L4 20l1.4-3.8a7.3 7.3 0 0 1-1.4-4.4A7.9 7.9 0 0 1 12 4a7.9 7.9 0 0 1 8 7.4Z" {...line} />
+          <Circle cx="8.5" cy="11.8" r="0.6" fill={color} stroke="none" />
+          <Circle cx="12" cy="11.8" r="0.6" fill={color} stroke="none" />
+          <Circle cx="15.5" cy="11.8" r="0.6" fill={color} stroke="none" />
+        </>
+      )}
       {name === 'moon' && <Path d="M19.5 15.8A8 8 0 0 1 8.2 4.5 8.2 8.2 0 1 0 19.5 15.8Z" {...line} />}
       {name === 'pause' && (
         <>
@@ -120,6 +150,7 @@ export function UiIcon({
           <Rect x="13.5" y="5" width="3.5" height="14" rx="1" {...line} />
         </>
       )}
+      {name === 'play' && <Path d="m8.5 5.8 10.2 6.2-10.2 6.2V5.8Z" fill={color} stroke="none" />}
       {name === 'plus' && (
         <>
           <Line x1="12" y1="5" x2="12" y2="19" {...line} />
@@ -160,6 +191,12 @@ export function UiIcon({
       {name === 'trash-2' && (
         <>
           <Path d="M4.5 7h15M9 7V4.5h6V7M7 7l.7 12.5h8.6L17 7M10 10.5v5M14 10.5v5" {...line} />
+        </>
+      )}
+      {name === 'tv' && (
+        <>
+          <Rect x="3.5" y="5" width="17" height="12.5" rx="2" {...line} />
+          <Path d="m9 20 3-2.5 3 2.5M9.5 2.5 12 5l2.5-2.5" {...line} />
         </>
       )}
       {name === 'x' && (
