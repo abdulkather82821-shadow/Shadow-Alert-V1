@@ -1,5 +1,6 @@
 import React from 'react';
-import { Platform, StyleSheet, useColorScheme, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
+import { useShadowAlert } from '@/context/ShadowAlertContext';
 import { useColors } from '@/hooks/useColors';
 import { BlurView } from 'expo-blur';
 import { Tabs } from 'expo-router';
@@ -7,8 +8,8 @@ import { TabIcon } from '@/components/TabIcon';
 
 function ClassicTabLayout() {
   const colors = useColors();
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
+  const { settings } = useShadowAlert();
+  const isDark = settings.darkMode;
   const isIOS = Platform.OS === 'ios';
   const isWeb = Platform.OS === 'web';
 
@@ -17,14 +18,16 @@ function ClassicTabLayout() {
       screenOptions={{
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.mutedForeground,
-        headerShown: true,
+        headerShown: false,
+        tabBarHideOnKeyboard: true,
+        tabBarLabelStyle: { fontSize: 11, fontWeight: '600', marginTop: 2 },
         tabBarStyle: {
           position: 'absolute',
-          backgroundColor: isIOS ? 'transparent' : colors.background,
+          backgroundColor: isIOS ? 'transparent' : colors.card,
           borderTopWidth: isWeb ? 1 : 0,
           borderTopColor: colors.border,
           elevation: 0,
-          ...(isWeb ? { height: 84 } : {}),
+          ...(isWeb ? { height: 78, paddingTop: 7, paddingBottom: 11 } : {}),
         },
         tabBarBackground: () =>
           isIOS ? (
@@ -37,7 +40,7 @@ function ClassicTabLayout() {
             <View
               style={[
                 StyleSheet.absoluteFill,
-                { backgroundColor: colors.background },
+                { backgroundColor: colors.card },
               ]}
             />
           ) : null,

@@ -9,9 +9,11 @@ dist/
 web-build/
 expo-env.d.ts
 
-# Native
+# Native build outputs
 ios/
 android/
+*.apk
+*.aab
 *.orig.*
 *.jks
 *.p8

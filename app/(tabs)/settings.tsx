@@ -1,15 +1,31 @@
-import React, { useState } from 'react';
-import { Alert, Pressable, Switch, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Alert, Platform, Pressable, Switch, Text, TextInput, View } from 'react-native';
 import { useShadowAlert } from '@/context/ShadowAlertContext';
-import { Screen, styles } from '@/components/ShadowUI';
+import { PrimaryButton, Screen, styles } from '@/components/ShadowUI';
 import { useColors } from '@/hooks/useColors';
 import { UiIcon, type UiIconName } from '@/components/UiIcon';
 export default function SettingsScreen() {
   const colors = useColors();
-  const { settings, toggleSetting, clearHistory, resetLimits } = useShadowAlert();
+  const { settings, toggleSetting, updateIntention, clearHistory, resetLimits } = useShadowAlert();
   const [about, setAbout] = useState(false);
   const [privacy, setPrivacy] = useState(false);
-  const confirm = (title: string, body: string, action: () => void) => Alert.alert(title, body, [{ text: 'Cancel', style: 'cancel' }, { text: 'Continue', style: 'destructive', onPress: action }]);
+  const [intentionDraft, setIntentionDraft] = useState(settings.intention);
+  useEffect(() => setIntentionDraft(settings.intention), [settings.intention]);
+
+  const confirm = (title: string, body: string, action: () => void) => {
+    if (Platform.OS === 'web') {
+      if (typeof window !== 'undefined' && window.confirm(`${title}\n\n${body}`)) action();
+      return;
+    }
+    Alert.alert(title, body, [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Continue', style: 'destructive', onPress: action },
+    ]);
+  };
+  const saveIntention = () => {
+    const nextIntention = intentionDraft.trim();
+    if (nextIntention) updateIntention(nextIntention);
+  };
   return (
     <Screen scroll>
       <View style={{ paddingTop: 8 }}>
@@ -29,9 +45,32 @@ export default function SettingsScreen() {
           </View>
         </View>
 
-        <Text style={[styles.appMeta, { color: colors.mutedForeground, marginBottom: 9 }]}>
-          COACHING
-        </Text>
+        <Text style={[styles.appMeta, { color: colors.mutedForeground, marginBottom: 9 }]}>YOUR INTENTION</Text>
+        <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <Text style={{ color: colors.foreground, fontSize: 15, fontWeight: '600' }}>A thought to carry with you</Text>
+          <TextInput
+            testID="intention-input"
+            accessibilityLabel="Your intention"
+            value={intentionDraft}
+            onChangeText={setIntentionDraft}
+            maxLength={120}
+            multiline
+            textAlignVertical="top"
+            placeholder="Use what helps. Leave what pulls."
+            placeholderTextColor={colors.mutedForeground}
+            style={{ color: colors.foreground, fontSize: 15, lineHeight: 22, minHeight: 76, paddingTop: 12, paddingBottom: 12 }}
+          />
+          <Text style={{ color: colors.mutedForeground, fontSize: 11, marginBottom: 12 }}>This note appears on your home screen.</Text>
+          <PrimaryButton
+            testID="save-intention"
+            disabled={!intentionDraft.trim() || intentionDraft.trim() === settings.intention}
+            onPress={saveIntention}
+          >
+            Save intention
+          </PrimaryButton>
+        </View>
+
+        <Text style={[styles.appMeta, { color: colors.mutedForeground, marginBottom: 9 }]}>COACHING</Text>
         <View
           style={[
             styles.card,
@@ -41,14 +80,14 @@ export default function SettingsScreen() {
           <SettingRow
             icon="bell"
             title="Limit reminders"
-            body="A quiet nudge before you cross your line."
+            body="Show a pause when a manual check-in reaches your line."
             value={settings.alerts}
             onChange={() => toggleSetting('alerts')}
           />
           <SettingRow
             icon="eye"
-            title="Monitoring"
-            body="Keep usage awareness switched on."
+            title="Manual check-ins"
+            body="Allow activity logging in this preview."
             value={settings.monitoring}
             onChange={() => toggleSetting('monitoring')}
           />
@@ -92,7 +131,7 @@ export default function SettingsScreen() {
             onPress={() =>
               confirm(
                 'Reset all limits?',
-                'Every monitored space will return to a 30 minute limit.',
+                'Every space will return to a 30 minute daily line.',
                 resetLimits,
               )
             }
@@ -120,8 +159,9 @@ export default function SettingsScreen() {
             onPress={() => setAbout(!about)}
           >
             <Text style={{ color: colors.mutedForeground, lineHeight: 21, fontSize: 13 }}>
-              Shadow Alert helps you notice the moment a habit becomes a reflex. It is not a
-              lockbox or a scorecard — it is a small pause before the next tap.
+              Shadow Alert is a gentle pause, not a lockbox or a scorecard. This preview lets you
+              log sample check-ins and experiment with daily lines; system-wide app tracking and
+              blocking are not enabled.
             </Text>
           </Disclosure>
           <Disclosure
@@ -131,8 +171,8 @@ export default function SettingsScreen() {
             onPress={() => setPrivacy(!privacy)}
           >
             <Text style={{ color: colors.mutedForeground, lineHeight: 21, fontSize: 13 }}>
-              Everything in this first release stays on this device. Your monitored apps, limits,
-              and usage history are saved locally and never sent anywhere.
+              Your plan and check-ins are saved locally on this device or browser. Shadow Alert
+              does not send them to a server or read app activity in the background.
             </Text>
           </Disclosure>
         </View>
@@ -155,7 +195,7 @@ export default function SettingsScreen() {
             marginTop: 5,
           }}
         >
-          Build 2026-09-02
+          Version 1.0
         </Text>
       </View>
     </Screen>
