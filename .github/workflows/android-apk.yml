@@ -39,14 +39,10 @@ jobs:
       - name: Install JavaScript dependencies
         run: npm ci
 
-      - name: Generate the Android project
-        run: npx expo prebuild --platform android --no-install
+      - name: Build standalone APK
+        run: npm run build:apk
         env:
           CI: '1'
-
-      - name: Build APK
-        run: ./gradlew assembleDebug
-        working-directory: android
 
       - name: Upload installable APK
         uses: actions/upload-artifact@v4
